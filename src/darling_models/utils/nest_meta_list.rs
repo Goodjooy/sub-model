@@ -1,6 +1,7 @@
 use darling::FromAttributes;
 use syn::{Meta, NestedMeta};
 
+/// loading meta list from attrs
 pub struct MetaList(Vec<Meta>);
 
 impl MetaList {
