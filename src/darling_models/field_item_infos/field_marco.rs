@@ -90,6 +90,7 @@ impl FromMeta for FieldType {
     }
 }
 
+/// all sub model on specify field
 pub struct FieldMarcos {
     pub inner: Vec<FieldType>,
 }
