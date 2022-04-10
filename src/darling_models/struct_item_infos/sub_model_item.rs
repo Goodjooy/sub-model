@@ -40,16 +40,17 @@ impl FromIdent for SubModelItem {
         }
     }
 }
-
+/// the sub model type 
+/// `all` or `none`
 #[derive(Debug, PartialEq, Eq)]
 pub enum ModelType {
     /// default will capture all field
     /// of parent Model except the fields
-    /// which tagged by `ignore`
+    /// tagged by `ignore`
     All,
     /// default will NOT capture all field
     /// of parent Model except the fields
-    /// which tagged by `want`
+    /// tagged by `want`
     None,
 }
 

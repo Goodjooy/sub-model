@@ -4,7 +4,6 @@ use darling::FromMeta;
 use syn::Ident;
 
 use crate::darling_models::utils::{darling_duplicate_field, only_neat_meta_list, Vis};
-
 #[derive(Debug, Clone, FromMeta)]
 pub struct NoNameExtraField {
     #[darling(default)]
@@ -15,6 +14,19 @@ pub struct NoNameExtraField {
     pub create: syn::Type,
 }
 
+/// for a better using of extra fields adding
+///
+/// using the path of nested meta as the extra
+///
+/// field name
+///
+/// like this
+/// ```rust ignore
+/// abb(ty="i32",from="Default::default")
+/// ```
+/// where the `add` will be the name of extra field,   
+///
+/// and its type is i32 , construct by func `Default::default`
 #[derive(Debug, Clone)]
 pub struct ExtraField {
     pub name: Ident,
@@ -43,6 +55,10 @@ impl FromMeta for ExtraField {
     }
 }
 
+/// all extra field for a single SubModel
+/// 
+/// using `HashMap` for a easy way test
+/// duplicate of extra fields
 #[derive(Debug, Default)]
 pub struct ExtraFields {
     pub inner: HashMap<Ident, ExtraField>,
@@ -97,7 +113,9 @@ mod test_extra {
             .into_iter()
             .collect::<Vec<_>>();
 
-        let mul_load = <ExtraFields as FromMeta>::from_list(&parsed_code).expect("Cannot Load").inner;
+        let mul_load = <ExtraFields as FromMeta>::from_list(&parsed_code)
+            .expect("Cannot Load")
+            .inner;
 
         println!("out {:?}", mul_load);
     }
