@@ -1,6 +1,6 @@
 # SubModel
 
-***the project is not finished***
+**_The project is not completed_**
 
 ## progress
 
