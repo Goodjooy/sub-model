@@ -1,8 +1,12 @@
+use std::collections::HashMap;
+
 use darling::FromMeta;
-use syn::MetaList;
+use syn::{Ident, MetaList};
 
 use super::{having_field::HaveField, ignore_field::IgnoreField};
-use crate::darling_models::utils::{darling_unknown_format, load_from_meta_list};
+use crate::darling_models::utils::{
+    darling_duplicate_field, darling_unknown_format, load_from_meta_list,
+};
 
 #[derive(Debug)]
 /// the type of have a field
@@ -92,21 +96,98 @@ impl FromMeta for FieldType {
 
 /// all sub model on specify field
 pub struct FieldMarcos {
-    pub inner: Vec<FieldType>,
+    pub inner: HashMap<Ident, FieldType>,
 }
 
 impl FromMeta for FieldMarcos {
     fn from_list(items: &[syn::NestedMeta]) -> darling::Result<Self> {
-        let mut inner = Vec::with_capacity(items.len());
+        let mut inner = HashMap::with_capacity(items.len());
         for item in items {
-            inner.push(FromMeta::from_nested_meta(item).map_err(|e| e.with_span(item))?)
+            let ft = FieldType::from_nested_meta(item).map_err(|e| e.with_span(item))?;
+            if let Some(ft) = inner.insert(ft.get_owner(), ft) {
+                darling_duplicate_field(&ft.get_owner())?;
+            }
         }
         Ok(Self { inner })
     }
 }
 
-
 #[cfg(test)]
-mod test{
-    
+mod test {
+    use darling::FromMeta;
+    use syn::{Ident, MetaList, NestedMeta};
+
+    use super::{FieldMarcos, FieldType};
+
+    #[test]
+    fn test_one_simple() {
+        let code = code!(NestedMeta:r#"
+        want("Mock")
+        "#
+        );
+        let mock = code!(Ident:"Mock");
+
+        let ft = FieldType::from_nested_meta(&code).unwrap();
+
+        assert_eq!(ft.get_owner(), mock);
+
+        println!("out :{:?}", &ft);
+    }
+
+    #[test]
+    fn test_one_complex() {
+        let item = code!(NestedMeta:r#"
+        having(
+            for="Mock",
+            vis="pub",
+            extra(
+                doc="aac"
+            ),
+            rename = "cca",
+            to_type(
+                ty="i32",
+                by="Into::into"
+            )
+        )
+        "#);
+        let mock = code!(Ident:"Mock");
+        let ft = FieldType::from_nested_meta(&item).unwrap();
+
+        assert_eq!(ft.get_owner(), mock);
+
+        println!("out {:?}", &ft);
+    }
+
+    #[test]
+    fn test_mix_complex() {
+        let item = code!(
+            MetaList:
+            r#"
+            sub_model(
+                want("Acc"),
+                ignore(for="Ea"),
+                having(
+                    for="Me",
+                    vis="pub",
+                    rename="ccd",
+                    to_type(
+                        ty="u32",
+                        by="Into::into"
+                    )
+                )
+            )
+            "#
+        )
+        .nested
+        .into_iter()
+        .collect::<Vec<_>>();
+
+        let fts = FieldMarcos::from_list(&item).unwrap().inner;
+
+        assert_eq!(fts.len(), 3);
+
+        for (k,v) in fts {
+            println!("owner : {:?}\n\n {:?}\n",k,v);
+        }
+    }
 }

@@ -41,8 +41,7 @@ impl FromField for FieldItem {
         let mut sub_maps = HashMap::with_capacity(sub_models.len());
         // load all sub model info into HashMap
         // and check whether duplicate field or not
-        for model in sub_models {
-            let name = model.get_owner();
+        for (name,model) in sub_models {
             if let Some(_) = sub_maps.insert(name.clone(), model) {
                 darling_duplicate_field(&name)?;
             }
