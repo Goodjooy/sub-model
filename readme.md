@@ -5,9 +5,9 @@
 ## progress
 
 - [x] load necessary SubModel information from marco input
-- [ ] generate codes
+- [x] generate codes
+- [x] field type mapping
+- [x] extra sub model field
 - [ ] support `Generic`
-- [ ] field type mapping
 - [ ] condition field type mapping
-- [ ] extra sub model field
 - [ ] a better way to add extra `proc_marco` onto field on SubModels
