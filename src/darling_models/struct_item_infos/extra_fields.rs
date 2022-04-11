@@ -3,7 +3,7 @@ use std::{collections::HashMap, ops::Deref};
 use darling::FromMeta;
 use syn::Ident;
 
-use crate::darling_models::utils::{darling_duplicate_field, only_neat_meta_list, Vis};
+use crate::darling_models::utils::{darling_duplicate_field, only_neat_meta_list, ExtraAttrs, Vis};
 #[derive(Debug, Clone, FromMeta)]
 pub struct NoNameExtraField {
     #[darling(default)]
@@ -11,7 +11,9 @@ pub struct NoNameExtraField {
     #[darling(rename = "ty")]
     pub ty: syn::Type,
     #[darling(rename = "from")]
-    pub create: syn::Type,
+    pub create: syn::Path,
+    #[darling(default)]
+    pub extra: ExtraAttrs,
 }
 
 /// for a better using of extra fields adding
@@ -56,7 +58,7 @@ impl FromMeta for ExtraField {
 }
 
 /// all extra field for a single SubModel
-/// 
+///
 /// using `HashMap` for a easy way test
 /// duplicate of extra fields
 #[derive(Debug, Default)]

@@ -1,19 +1,16 @@
 use std::collections::HashMap;
 
-use syn::{ExprField, Ident, Type};
+use syn::{Ident, Type};
 
 use crate::darling_models::{
     field_item_infos::{FieldItem, FieldType, HaveField, HaveStatus, TypeMapping},
+    struct_item_infos::{ExtraField, ExtraFields, ModelType},
     utils::darling_duplicate_field,
     FromIdent,
 };
 
-use super::{
-    extra_fields::{ExtraField, ExtraFields},
-    ModelType,
-};
-
 /// the field comes from Parent Model
+#[derive(Debug, Clone)]
 pub struct SrcField {
     /// the field name in Parent Model
     pub src_name: Ident,
@@ -37,6 +34,7 @@ impl SrcField {
 }
 
 /// each field in SubModel
+#[derive(Debug, Clone)]
 pub enum ModelField {
     /// the Field Come from Parent Model
     Src(SrcField),
@@ -54,7 +52,7 @@ impl ModelField {
 }
 
 pub struct SubModelFields {
-    inner: HashMap<Ident, ModelField>,
+    pub inner: HashMap<Ident, ModelField>,
 }
 
 impl SubModelFields {

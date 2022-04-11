@@ -26,7 +26,7 @@ pub struct HaveField {
     /// extra information which tagging on
     /// the field in SubModel
     #[darling(default)]
-    pub extra: Option<ExtraAttrs>,
+    pub extra:ExtraAttrs,
 }
 
 impl FromIdent for HaveField {
@@ -36,7 +36,7 @@ impl FromIdent for HaveField {
         Self {
             owner: ident,
             vis: Vis::default(),
-            extra: None,
+            extra: ExtraAttrs::default(),
             to_name: None,
             to_type: None,
         }
