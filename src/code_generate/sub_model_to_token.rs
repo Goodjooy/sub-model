@@ -34,11 +34,11 @@ impl ToTokens for SubModelGen<'_> {
 
         let convert_toke = quote::quote! {
             impl From<#parent> for #name{
-                fn From(#v_parent : #parent)->Self{
+                fn from(#v_parent : #parent)->Self{
                     Self{
                         #(
                             #create_field
-                        )*
+                        ),*
                     }
                 }
             }

@@ -51,6 +51,7 @@ impl ModelField {
     }
 }
 
+#[derive(Debug)]
 pub struct SubModelFields {
     pub inner: HashMap<Ident, ModelField>,
 }

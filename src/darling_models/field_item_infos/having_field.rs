@@ -17,7 +17,7 @@ pub struct HaveField {
     pub vis: Vis,
     /// wether the field rename to
     /// another in sub model
-    #[darling(rename = "rename")]
+    #[darling(rename = "rename",default)]
     pub to_name: Option<Ident>,
     /// mapping type from parent to provide  
     /// if necessary
