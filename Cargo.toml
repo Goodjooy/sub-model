@@ -2,7 +2,16 @@
 name = "sub-model"
 version = "0.1.0"
 edition = "2021"
+authors = ["FrozenString<frozenstringstable@gmail.com>"]
+description = "a proc marco for easy generate sub models"
+homepage = "https://github.com/Goodjooy/sub-model"
+documentation = "https://docs.rs/sub-model"
+license = "MIT"
+readme ="./readme.md"
 
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [lib]
