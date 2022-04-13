@@ -7,20 +7,32 @@ description = "a proc marco for easy generate sub models"
 homepage = "https://github.com/Goodjooy/sub-model"
 documentation = "https://docs.rs/sub-model"
 license = "MIT"
-readme ="./readme.md"
+readme = "./readme.md"
 
 [package.metadata.docs.rs]
 all-features = true
 rustdoc-args = ["--cfg", "docsrs"]
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [lib]
 proc-macro = true
 
+[features]
+default = []
+auto_derive_all = [
+    "auto_derive_serde",
+    "auto_derive_base",
+    "auto_derive_builder"
+]
+# serde derive
+auto_derive_serde = []
+# Debug Clone
+auto_derive_base = []
+# TypeBuilder
+auto_derive_builder = []
+
 [dependencies]
-syn = {version="1.0",features=[
-    "extra-traits"
-]}
+syn = { version = "1.0", features = ["extra-traits"] }
 quote = "1.0"
 proc-macro2 = "1.0"
 darling = "0.13"

@@ -2,7 +2,7 @@ use darling::ToTokens;
 
 use quote::format_ident;
 
-use super::{field_to_token::ModelFieldCreate, sub_model::SubModelGen};
+use super::{field_to_token::ModelFieldCreate, sub_model::SubModelGen, extra_derives::ExtraDerives};
 
 impl ToTokens for SubModelGen<'_> {
     fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
@@ -13,10 +13,13 @@ impl ToTokens for SubModelGen<'_> {
         let extra = self.extra.inner.iter();
         let fields = self.field.inner.iter().map(|(_, v)| v);
 
+        let extra_derive =ExtraDerives;
+
         let def_token = quote::quote! {
             #(
                 #[#extra]
             )*
+            #extra_derive
             #vis struct #name {
                 #(
                     #fields
