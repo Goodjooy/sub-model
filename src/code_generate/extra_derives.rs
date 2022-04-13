@@ -4,6 +4,7 @@ use darling::ToTokens;
 pub struct ExtraDerives;
 
 impl ToTokens for ExtraDerives {
+    #[allow(unused_variables)]
     fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
         #[cfg(feature="auto_derive_base")]
         tokens.extend(quote::quote! {
