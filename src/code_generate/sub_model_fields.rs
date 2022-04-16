@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use syn::{Ident, Type};
 
 use crate::darling_models::{
-    field_item_infos::{FieldItem, FieldType, HaveField, HaveStatus, TypeMapping},
+    field_item_infos::{FieldItem, FieldInput, HaveField, HaveStatus, TypeMapping},
     struct_item_infos::{ExtraField, ExtraFields, ModelType},
     utils::darling_duplicate_field,
     FromIdent,
@@ -72,15 +72,15 @@ impl SubModelFields {
                         src_ty: item.ty.clone(),
                         extra_info: FromIdent::form_ident(owner.clone()),
                     }),
-                    (Some(FieldType::Ignore(_)), ModelType::All) => None?,
-                    (Some(FieldType::Have(HaveStatus::Having, have)), ModelType::All) => {
+                    (Some(FieldInput::Ignore(_)), ModelType::All) => None?,
+                    (Some(FieldInput::Have(HaveStatus::Having, have)), ModelType::All) => {
                         ModelField::Src(SrcField {
                             src_name: item.name.clone(),
                             src_ty: item.ty.clone(),
                             extra_info: have.clone(),
                         })
                     }
-                    (Some(FieldType::Have(HaveStatus::Want, have)), ModelType::None) => {
+                    (Some(FieldInput::Have(HaveStatus::Want, have)), ModelType::None) => {
                         ModelField::Src(SrcField {
                             src_name: item.name.clone(),
                             src_ty: item.ty.clone(),
@@ -88,13 +88,13 @@ impl SubModelFields {
                         })
                     }
                     (None, ModelType::None) => None?,
-                    (Some(FieldType::Have(HaveStatus::Want, _)), ModelType::All) => {
+                    (Some(FieldInput::Have(HaveStatus::Want, _)), ModelType::All) => {
                         panic!("All Type SubModel Using Want")
                     }
-                    (Some(FieldType::Have(HaveStatus::Having, _)), ModelType::None) => {
+                    (Some(FieldInput::Have(HaveStatus::Having, _)), ModelType::None) => {
                         panic!("None Type SubModel Using Having")
                     }
-                    (Some(FieldType::Ignore(_)), ModelType::None) => {
+                    (Some(FieldInput::Ignore(_)), ModelType::None) => {
                         panic!("None Type SubModel Using Ignore")
                     }
                 })

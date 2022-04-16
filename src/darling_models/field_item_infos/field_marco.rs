@@ -21,7 +21,7 @@ pub enum HaveStatus {
 
 #[derive(Debug)]
 /// a multi type for SubModel Info
-pub enum FieldType {
+pub enum FieldInput {
     /// the SubModel want Ignore It.
     /// only use for *all*
     Ignore(IgnoreField),
@@ -30,7 +30,7 @@ pub enum FieldType {
     Have(HaveStatus, HaveField),
 }
 
-impl FieldType {
+impl FieldInput {
     fn new_want(want: HaveField) -> darling::Result<Self> {
         Ok(Self::Have(HaveStatus::Want, want))
     }
@@ -45,14 +45,14 @@ impl FieldType {
 
     pub fn get_owner(&self) -> syn::Ident {
         match self {
-            FieldType::Ignore(ig) => &ig.owner,
-            FieldType::Have(_, hv) => &hv.owner,
+            FieldInput::Ignore(ig) => &ig.owner,
+            FieldInput::Have(_, hv) => &hv.owner,
         }
         .to_owned()
     }
 }
 
-impl FromMeta for FieldType {
+impl FromMeta for FieldInput {
     fn from_nested_meta(item: &syn::NestedMeta) -> darling::Result<Self> {
         match item {
             syn::NestedMeta::Meta(meta) => {
@@ -95,15 +95,15 @@ impl FromMeta for FieldType {
 }
 
 /// all sub model on specify field
-pub struct FieldMarcos {
-    pub inner: HashMap<Ident, FieldType>,
+pub struct FieldInputs {
+    pub inner: HashMap<Ident, FieldInput>,
 }
 
-impl FromMeta for FieldMarcos {
+impl FromMeta for FieldInputs {
     fn from_list(items: &[syn::NestedMeta]) -> darling::Result<Self> {
         let mut inner = HashMap::with_capacity(items.len());
         for item in items {
-            let ft = FieldType::from_nested_meta(item).map_err(|e| e.with_span(item))?;
+            let ft = FieldInput::from_nested_meta(item).map_err(|e| e.with_span(item))?;
             if let Some(ft) = inner.insert(ft.get_owner(), ft) {
                 darling_duplicate_field(&ft.get_owner())?;
             }
@@ -117,7 +117,7 @@ mod test {
     use darling::FromMeta;
     use syn::{Ident, MetaList, NestedMeta};
 
-    use super::{FieldMarcos, FieldType};
+    use super::{FieldInputs, FieldInput};
 
     #[test]
     fn test_one_simple() {
@@ -127,7 +127,7 @@ mod test {
         );
         let mock = code!(Ident:"Mock");
 
-        let ft = FieldType::from_nested_meta(&code).unwrap();
+        let ft = FieldInput::from_nested_meta(&code).unwrap();
 
         assert_eq!(ft.get_owner(), mock);
 
@@ -151,7 +151,7 @@ mod test {
         )
         "#);
         let mock = code!(Ident:"Mock");
-        let ft = FieldType::from_nested_meta(&item).unwrap();
+        let ft = FieldInput::from_nested_meta(&item).unwrap();
 
         assert_eq!(ft.get_owner(), mock);
 
@@ -182,7 +182,7 @@ mod test {
         .into_iter()
         .collect::<Vec<_>>();
 
-        let fts = FieldMarcos::from_list(&item).unwrap().inner;
+        let fts = FieldInputs::from_list(&item).unwrap().inner;
 
         assert_eq!(fts.len(), 3);
 
