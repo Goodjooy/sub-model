@@ -37,9 +37,3 @@ pub trait LikeLoader {
     /// get target field info from special model
     fn get_model_field(&self, model: &Ident, field: &Ident) -> &Self::Super;
 }
-
-pub trait SuperStatus {
-    /// the head has `include` or `exclude`
-    /// the field should not have any tagged
-    fn head_ctrl(&self) -> bool;
-}
