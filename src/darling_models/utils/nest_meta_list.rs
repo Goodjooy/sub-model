@@ -11,6 +11,12 @@ impl MetaList {
             .collect()
     }
 
+    pub fn false_filter_with_ident(self, ident: &'static str) -> Self {
+        self.into_iter()
+            .filter(|meta| !meta.path().is_ident(ident))
+            .collect()
+    }
+
     pub fn group_into_nest_meta(self) -> Vec<NestedMeta> {
         self.into_iter()
             .filter_map(|meta| match meta {

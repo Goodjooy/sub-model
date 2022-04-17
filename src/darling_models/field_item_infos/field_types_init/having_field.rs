@@ -1,9 +1,8 @@
 use syn::Ident;
 
-use super::type_mapping::TypeMapping;
 use crate::darling_models::{
     utils::{ExtraAttrs, Like, Vis},
-    FromIdent,
+    FromIdent, field_item_infos::TypeMapping,
 };
 
 #[derive(Debug, Clone, darling::FromMeta)]

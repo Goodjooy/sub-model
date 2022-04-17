@@ -1,3 +1,4 @@
+mod field_server;
 mod like;
 mod err_prefab;
 mod extra_attr;
@@ -13,6 +14,7 @@ pub use nest_meta_list::MetaList;
 pub use only_nest_meta_list::only_neat_meta_list;
 pub use vis::Vis;
 pub use like::Like;
+pub use field_server::FieldServer;
 
 pub const ATTR_NAME: &str = "sub_model";
 

@@ -3,10 +3,12 @@ use std::collections::HashMap;
 use darling::FromMeta;
 use syn::{Ident, MetaList};
 
-use super::{having_field::HaveField, ignore_field::IgnoreField};
 use crate::darling_models::utils::{
     darling_duplicate_field, darling_unknown_format, load_from_meta_list,
 };
+
+use super::{IgnoreField, HaveField};
+
 
 #[derive(Debug)]
 /// the type of have a field

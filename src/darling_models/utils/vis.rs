@@ -6,6 +6,12 @@ use crate::darling_models::utils::darling_unknown_format;
 #[derive(Debug, Clone, Default)]
 pub struct Vis(Option<Visibility>);
 
+impl From<Visibility> for Vis {
+    fn from(v: Visibility) -> Self {
+        Self(Some(v))
+    }
+}
+
 impl FromMeta for Vis {
     fn from_word() -> darling::Result<Self> {
         Ok(Self(Some(Visibility::Inherited)))
@@ -34,4 +40,3 @@ impl ToTokens for Vis {
         tokens.extend(quote);
     }
 }
-
