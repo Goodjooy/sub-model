@@ -45,11 +45,21 @@ impl<'s, M: LoadingModelInfo> FieldServer<field_types_init::FieldItem>
         let mut model_having = HashMap::new();
 
         for key in self.model.all_models() {
-            match self
-                .model
-                .model_type(key)
-                .ok_or(darling::Error::unknown_value(&key.to_string()))?
-            {
+            // check where is control by head
+            self.model
+                .head_ctrl(key)
+                .ok_or(darling::Error::unknown_value(&key.to_string()))
+                .and_then(|b| {
+                    if b {
+                        Err(darling::Error::unsupported_format(
+                            "Want/Ignore set by head",
+                        ))
+                    } else {
+                        Ok(())
+                    }
+                })?;
+                
+            match self.model.model_type(key).unwrap() {
                 ModelType::All => {
                     if let Some(input) = sub_models.remove(key) {
                         match input {
@@ -102,3 +112,6 @@ impl<'s, M: LoadingModelInfo> FieldServer<field_types_init::FieldItem>
         })
     }
 }
+
+#[cfg(test)]
+mod test_mapping {}

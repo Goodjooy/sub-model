@@ -4,11 +4,11 @@ use darling::{FromAttributes, FromDeriveInput, FromField, FromMeta};
 use syn::Ident;
 
 use crate::{
-    bridges::{self, LoadingModelInfo},
+    bridges::{self, LikeTo, LoadingModelInfo},
     darling_models::{
         field_item_infos::{FieldItem, FieldModelInput, FieldWithModelTypeServer},
         struct_item_infos::sub_model_item::SubModels,
-        utils::{darling_custom, FieldServer, MetaList, ATTR_NAME},
+        utils::{self, darling_custom, FieldServer, Like, MetaList, ATTR_NAME},
     },
 };
 
@@ -89,5 +89,9 @@ impl LoadingModelInfo for SubModelDefs {
 
     fn all_models<'s>(&'s self) -> std::collections::hash_map::Keys<'s, Ident, Self::Value> {
         self.sub_models.keys()
+    }
+
+    fn model_like_to(&self, key: &Ident) -> Option<&Like> {
+        self.sub_models.get(key).and_then(|ty| ty.like_to())
     }
 }

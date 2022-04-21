@@ -10,8 +10,8 @@ pub trait FieldBaseInfo {
     fn ty(&self) -> &syn::Type;
 }
 
-pub trait FieldLikeTo {
-    fn like_to(&self) -> &Like;
+pub trait LikeTo {
+    fn like_to(&self) -> Option<&Like>;
 }
 
 pub trait FieldConstruct {

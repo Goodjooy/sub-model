@@ -1,3 +1,4 @@
+mod field_with_model_like;
 mod field_item_with_model_type;
 mod field_types_init;
 mod type_mapping;
