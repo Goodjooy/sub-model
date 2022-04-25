@@ -1,11 +1,12 @@
+mod bridges;
 mod code_generate;
+mod darling_models;
 
 use code_generate::sub_model::load_from_sub_model_defs;
 use darling::FromDeriveInput;
 use darling_models::struct_item_infos::SubModelDefs;
 use syn::{parse_macro_input, DeriveInput};
 
-mod darling_models;
 
 #[proc_macro_derive(SubModel, attributes(sub_model))]
 pub fn sub_model_derive_marco(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
