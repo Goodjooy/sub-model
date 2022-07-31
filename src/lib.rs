@@ -7,6 +7,7 @@ use syn::{parse_macro_input, DeriveInput};
 
 mod darling_models;
 
+#[doc= include_str!("../readme.md")]
 #[proc_macro_derive(SubModel, attributes(sub_model))]
 pub fn sub_model_derive_marco(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let derive_input = parse_macro_input!(input as DeriveInput);
