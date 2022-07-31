@@ -186,8 +186,8 @@ mod test {
 
         assert_eq!(fts.len(), 3);
 
-        for (k,v) in fts {
-            println!("owner : {:?}\n\n {:?}\n",k,v);
+        for (k, v) in fts {
+            println!("owner : {:?}\n\n {:?}\n", k, v);
         }
     }
 }

@@ -24,7 +24,11 @@ in the `all` or `none`
 - if only need define the name of sub model, can use like that
 
 ```rust
+#[derive(sub_model::SubModel)]
 #[sub_model(all("foo"),none("foo2"))]
+struct Foo3{
+    i: i32
+}
 ```
 
 - or else using full pattern `name = "foo"`
@@ -38,11 +42,15 @@ there a a set of information can be define
   - the `from` define how to create the value in this field, it accept a path to a function without any params
 
 ```rust
-#[all(
+#[derive(sub_model::SubModel)]
+#[sub_model(all(
     name = "foo",
     extra_field(
         foo(ty = "bool", from = "Default::default")
-))]
+)))]
+struct Foo3{
+    i: i32
+}
 ```
 
 the example add a new field named `foo` with type `bool`,create by `Default::default` to sub model `foo`
@@ -50,11 +58,15 @@ the example add a new field named `foo` with type `bool`,create by `Default::def
 - `extra` other marco that add to this new sub model, for example
 
 ```rust
-#[all(
+#[derive(sub_model::SubModel)]
+#[sub_model(all(
     name = "foo",
     extra(
-        derive(Debug, Serialize, Deserialize)
-))]
+        derive(Debug)
+)))]
+struct Foo3{
+    i: i32
+}
 ```
 
-the example make the sub model `foo` can `serialize` and `deserialize`
+the example make the sub model `foo` impl `Debug`

@@ -48,7 +48,7 @@ impl FromMeta for ExtraField {
         only_neat_meta_list(item, |path, items| {
             let name = path
                 .get_ident()
-                .ok_or(darling::Error::unsupported_format("path").with_span(path))?
+                .ok_or_else(|| darling::Error::unsupported_format("path").with_span(path))?
                 .clone();
             let extra = <NoNameExtraField as FromMeta>::from_list(items)?;
 
@@ -73,7 +73,7 @@ impl FromMeta for ExtraFields {
         for item in items {
             let item = ExtraField::from_nested_meta(item)?;
             let name = item.name.clone();
-            if let Some(_) = inner.insert(name.clone(), item) {
+            if inner.insert(name.clone(), item).is_some() {
                 darling_duplicate_field(&name)?;
             }
         }

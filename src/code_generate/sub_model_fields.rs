@@ -22,14 +22,14 @@ pub struct SrcField {
 
 impl SrcField {
     pub fn get_tgt_name(&self) -> Ident {
-        (self.extra_info.to_name.clone()).unwrap_or(self.src_name.clone())
+        (self.extra_info.to_name.clone()).unwrap_or_else(|| self.src_name.clone())
     }
 
     pub fn get_tgt_type(&self) -> Type {
         let tm: Option<&TypeMapping> = (&self.extra_info.to_type).into();
 
         tm.map(|m| m.target_type.clone())
-            .unwrap_or(self.src_ty.clone())
+            .unwrap_or_else(|| self.src_ty.clone())
     }
 }
 
@@ -64,7 +64,7 @@ impl SubModelFields {
     ) -> darling::Result<Self> {
         let fields = field_items
             .as_ref()
-            .into_iter()
+            .iter()
             .filter_map(|item| {
                 Some(match (item.sub_models.get(owner), ty) {
                     (None, ModelType::All) => ModelField::Src(SrcField {
@@ -103,7 +103,7 @@ impl SubModelFields {
         let mut inner = HashMap::with_capacity(fields.len());
         for field in fields {
             let name = field.get_field_name();
-            if let Some(_) = inner.insert(name.clone(), field) {
+            if inner.insert(name.clone(), field).is_some() {
                 darling_duplicate_field(&name)?;
             }
         }
@@ -113,9 +113,10 @@ impl SubModelFields {
 
     pub fn adding_extras(mut self, extra_fields: &ExtraFields) -> darling::Result<Self> {
         for (name, extra) in &extra_fields.inner {
-            if let Some(_) = self
+            if self
                 .inner
                 .insert(name.clone(), ModelField::Extra(extra.clone()))
+                .is_some()
             {
                 darling_duplicate_field(name)?;
             }

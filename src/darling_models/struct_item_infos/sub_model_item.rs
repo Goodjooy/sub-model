@@ -40,7 +40,7 @@ impl FromIdent for SubModelItem {
         }
     }
 }
-/// the sub model type 
+/// the sub model type
 /// `all` or `none`
 #[derive(Debug, PartialEq, Eq)]
 pub enum ModelType {
@@ -234,32 +234,41 @@ mod test {
         let mock_b = code!(Ident:"MockB");
         let mock_c = code!(Ident:"MockC");
 
-        let code_out = <SubModels as FromMeta>::from_nested_meta(&item).unwrap().inner;
+        let code_out = <SubModels as FromMeta>::from_nested_meta(&item)
+            .unwrap()
+            .inner;
 
-        
         assert!(code_out.get(&mock_a).is_some());
-        assert_eq!(code_out.get(&mock_a).unwrap().get_name(),mock_a);
-        assert_eq!(code_out.get(&mock_a).unwrap().ty,ModelType::All);
-        assert_eq!(code_out.get(&mock_a).unwrap().data.extra_field.inner.len(),0);
-        assert_eq!(code_out.get(&mock_a).unwrap().data.extra.inner.len(),0);
+        assert_eq!(code_out.get(&mock_a).unwrap().get_name(), mock_a);
+        assert_eq!(code_out.get(&mock_a).unwrap().ty, ModelType::All);
+        assert_eq!(
+            code_out.get(&mock_a).unwrap().data.extra_field.inner.len(),
+            0
+        );
+        assert_eq!(code_out.get(&mock_a).unwrap().data.extra.inner.len(), 0);
 
-        println!("out {:?}\n\n",code_out.get(&mock_a).unwrap());
-        
-        
+        println!("out {:?}\n\n", code_out.get(&mock_a).unwrap());
+
         assert!(code_out.get(&mock_b).is_some());
-        assert_eq!(code_out.get(&mock_b).unwrap().get_name(),mock_b);
-        assert_eq!(code_out.get(&mock_b).unwrap().ty,ModelType::None);
-        assert_eq!(code_out.get(&mock_b).unwrap().data.extra_field.inner.len(),0);
-        assert_eq!(code_out.get(&mock_b).unwrap().data.extra.inner.len(),0);
-        
-        println!("out {:?}\n\n",code_out.get(&mock_b).unwrap());
-        
-        assert!(code_out.get(&mock_c).is_some());
-        assert_eq!(code_out.get(&mock_c).unwrap().get_name(),mock_c);
-        assert_eq!(code_out.get(&mock_c).unwrap().ty,ModelType::All);
-        assert_eq!(code_out.get(&mock_c).unwrap().data.extra_field.inner.len(),2);
-        assert_eq!(code_out.get(&mock_c).unwrap().data.extra.inner.len(),2);
+        assert_eq!(code_out.get(&mock_b).unwrap().get_name(), mock_b);
+        assert_eq!(code_out.get(&mock_b).unwrap().ty, ModelType::None);
+        assert_eq!(
+            code_out.get(&mock_b).unwrap().data.extra_field.inner.len(),
+            0
+        );
+        assert_eq!(code_out.get(&mock_b).unwrap().data.extra.inner.len(), 0);
 
-        println!("out {:?}\n\n",code_out.get(&mock_c).unwrap());
+        println!("out {:?}\n\n", code_out.get(&mock_b).unwrap());
+
+        assert!(code_out.get(&mock_c).is_some());
+        assert_eq!(code_out.get(&mock_c).unwrap().get_name(), mock_c);
+        assert_eq!(code_out.get(&mock_c).unwrap().ty, ModelType::All);
+        assert_eq!(
+            code_out.get(&mock_c).unwrap().data.extra_field.inner.len(),
+            2
+        );
+        assert_eq!(code_out.get(&mock_c).unwrap().data.extra.inner.len(), 2);
+
+        println!("out {:?}\n\n", code_out.get(&mock_c).unwrap());
     }
 }
