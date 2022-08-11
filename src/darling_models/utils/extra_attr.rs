@@ -1,4 +1,4 @@
-use darling::FromMeta;
+use darling::{FromMeta, ToTokens};
 use syn::{Meta, NestedMeta};
 
 /// loading extra attrs from meta
@@ -25,5 +25,16 @@ impl FromMeta for ExtraAttrs {
     fn from_string(value: &str) -> darling::Result<Self> {
         let meta = Meta::from_string(value)?;
         Self::from_meta(&meta)
+    }
+}
+
+impl ToTokens for ExtraAttrs {
+    fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
+        let iter = self.inner.iter();
+
+        let token = quote::quote! {
+            #(#[#iter])*
+        };
+        tokens.extend(token)
     }
 }
