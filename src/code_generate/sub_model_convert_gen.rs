@@ -32,8 +32,8 @@ impl<'m> ToTokens for SubModelConvertGen<'m> {
             root_ident,
         } = self;
         let fields = fields
-            .into_iter()
-            .map(|v| SubModelFieldConstructGen::from_sub_model_field_def(v, &root_ident));
+            .iter()
+            .map(|v| SubModelFieldConstructGen::from_sub_model_field_def(v, root_ident));
 
         tokens.extend(quote::quote! {
             impl std::convert::From < #root_model > for #name {

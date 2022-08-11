@@ -33,7 +33,7 @@ impl FromDeriveInput for SubModelDefs {
             syn::Data::Union(_) => Err(darling::Error::unexpected_type("Union"))?,
         };
 
-        if input.generics.params.len() != 0 {
+        if !input.generics.params.is_empty() {
             darling_custom("SubModel Not Support Generic yet.")?;
         }
 

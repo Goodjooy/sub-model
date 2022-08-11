@@ -6,7 +6,6 @@ use crate::darling_models::{
     utils::{ExtraAttrs, Vis},
 };
 
-
 use super::sub_model_field_def::SubModelFieldDef;
 
 #[derive(Debug)]
@@ -58,9 +57,7 @@ impl SubModelDef {
         })
     }
 
-    pub fn from_sub_model_defs(
-        mut sub_model_defs: SubModelDefs,
-    ) -> syn::Result<Vec<Self>> {
+    pub fn from_sub_model_defs(mut sub_model_defs: SubModelDefs) -> syn::Result<Vec<Self>> {
         let mut vec = Vec::new();
         for def in sub_model_defs.sub_models.into_values() {
             let def = SubModelDef::from_sub_model_def(
@@ -75,9 +72,8 @@ impl SubModelDef {
     }
 }
 
-
 #[cfg(test)]
-mod test{
+mod test {
     use darling::FromDeriveInput;
     use syn::DeriveInput;
 
@@ -86,8 +82,9 @@ mod test{
     use super::SubModelDef;
 
     #[test]
-    fn test(){
-        let tokens:DeriveInput = syn::parse_str(r#"
+    fn test() {
+        let tokens: DeriveInput = syn::parse_str(
+            r#"
             #[sub_model(
                 all(
                     vis = "pub",
@@ -116,13 +113,19 @@ mod test{
                 bar : String,
                 foo_bar: u32,
             }
-        "#).unwrap();
+        "#,
+        )
+        .unwrap();
 
         let v = SubModelDefs::from_derive_input(&tokens).unwrap();
 
-        let v = SubModelDef::from_sub_model_defs(v).unwrap().into_iter().next().unwrap();
-        
-        assert_eq!(v.fields.len(),4);
+        let v = SubModelDef::from_sub_model_defs(v)
+            .unwrap()
+            .into_iter()
+            .next()
+            .unwrap();
+
+        assert_eq!(v.fields.len(), 4);
         println!("{v:#?}")
     }
 }

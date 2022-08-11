@@ -35,7 +35,7 @@ impl<'m> ToTokens for SubModelStructureGen<'m> {
             fields,
         } = self;
         let fields = fields
-            .into_iter()
+            .iter()
             .map(SubModelFieldGen::from_sub_model_field_def);
         let extra_derive = ExtraDerives;
         let token = quote::quote! {

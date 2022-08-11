@@ -28,7 +28,7 @@ impl FromField for FieldItem {
         // the `SubModel` only support to NamedStruct
         let name = ident
             .cloned()
-            .ok_or(darling::Error::unsupported_format("UnNamedField").with_span(field))?;
+            .ok_or_else(|| darling::Error::unsupported_format("UnNamedField").with_span(field))?;
 
         // loading Vec<nested meta> from field Attr
         // under specify attr name
@@ -42,7 +42,7 @@ impl FromField for FieldItem {
         // load all sub model info into HashMap
         // and check whether duplicate field or not
         for (name, model) in sub_models {
-            if let Some(_) = sub_maps.insert(name.clone(), model) {
+            if sub_maps.insert(name.clone(), model).is_some() {
                 darling_duplicate_field(&name)?;
             }
         }

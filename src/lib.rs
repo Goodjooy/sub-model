@@ -1,3 +1,5 @@
+#![allow(clippy::large_enum_variant)]
+
 #[macro_use]
 mod utils;
 mod bridge;

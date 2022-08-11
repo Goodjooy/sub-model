@@ -1,13 +1,16 @@
 use sub_model::SubModel;
 
-fn main(){
-    let mock = MockA{ i: 122, b: 1221, c: false };
+fn main() {
+    let mock = MockA {
+        i: 122,
+        b: 1221,
+        c: false,
+    };
 
-    let sub_a:SubB = mock.into();
+    let sub_a: SubB = mock.into();
 
     println!("{sub_a:?}")
 }
-
 
 #[derive(SubModel)]
 #[sub_model(

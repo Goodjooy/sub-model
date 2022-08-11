@@ -15,7 +15,7 @@ impl<'m> SubModel<'m> {
     pub fn from_sub_model_def(def: &'m SubModelDef, root_ident: &'m Ident) -> Self {
         Self {
             model_struct: SubModelStructureGen::from_sub_model_def(def),
-            convert: SubModelConvertGen::from_sub_model_def(def, &root_ident),
+            convert: SubModelConvertGen::from_sub_model_def(def, root_ident),
         }
     }
 }

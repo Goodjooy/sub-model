@@ -45,13 +45,12 @@ impl SubModelFieldFromRoot {
     ) -> Self {
         let field_type_mapping = FieldFromRootTypeMapping::from_option_type_mapping(to_type);
 
-        let from_model = SubModelFieldFromRoot {
+        SubModelFieldFromRoot {
             root_name: root_name.to_owned(),
             root_type: root_ty.to_owned(),
             field_type_mapping,
             filed_ident_mapping: to_name,
-        };
-        from_model
+        }
     }
 }
 #[derive(Debug)]
