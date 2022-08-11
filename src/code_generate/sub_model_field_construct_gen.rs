@@ -63,7 +63,7 @@ impl<'s> ToTokens for SubModelFieldConstructGen<'s> {
                     // map ident
                     (Some(ident), None) => quote::quote! { #root_model_ident. #ident },
                     (Some(ident), Some(mapper)) => {
-                        quote::quote! {#mapper ( root_model_ident . #ident )}
+                        quote::quote! {#mapper ( #root_model_ident . #ident )}
                     }
                 }
             }
