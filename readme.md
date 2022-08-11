@@ -23,7 +23,7 @@ in the `all` or `none`
 
 - if only need define the name of sub model, can use like that
 
-```rust
+```rust ignore
 #[sub_model(all("foo"),none("foo2"))]
 ```
 
@@ -37,7 +37,7 @@ there a a set of information can be define
   - the `ty` define the type of extra field
   - the `from` define how to create the value in this field, it accept a path to a function without any params
 
-```rust
+```rust ignore
 #[all(
     name = "foo",
     extra_field(
@@ -49,7 +49,7 @@ the example add a new field named `foo` with type `bool`,create by `Default::def
 
 - `extra` other marco that add to this new sub model, for example
 
-```rust
+```rust ignore
 #[all(
     name = "foo",
     extra(

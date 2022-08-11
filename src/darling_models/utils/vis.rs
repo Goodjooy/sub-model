@@ -34,4 +34,3 @@ impl ToTokens for Vis {
         tokens.extend(quote);
     }
 }
-

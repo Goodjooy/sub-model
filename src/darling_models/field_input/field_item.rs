@@ -1,20 +1,20 @@
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 use darling::{FromAttributes, FromField, FromMeta};
 use syn::{Ident, Type};
 
 use crate::darling_models::utils::{darling_duplicate_field, MetaList, ATTR_NAME};
 
-use super::field_marco::{FieldMarcos, FieldType};
+use super::sub_model_field_define::{SubModelFieldDef, SubModelFieldDefs};
 
-/// the needing field info from Parent Model field 
+/// the needing field info from Parent Model field
 pub struct FieldItem {
     /// the name of Parent field
     pub name: Ident,
     /// the type of Parent field
     pub ty: Type,
     /// all SubModel relate to this field
-    pub sub_models: HashMap<Ident, FieldType>,
+    pub sub_model_field_defines: BTreeMap<Ident, SubModelFieldDef>,
 }
 
 impl FromField for FieldItem {
@@ -28,7 +28,7 @@ impl FromField for FieldItem {
         // the `SubModel` only support to NamedStruct
         let name = ident
             .cloned()
-            .ok_or(darling::Error::unsupported_format("UnNamedField").with_span(field))?;
+            .ok_or_else(|| darling::Error::unsupported_format("UnNamedField").with_span(field))?;
 
         // loading Vec<nested meta> from field Attr
         // under specify attr name
@@ -36,13 +36,13 @@ impl FromField for FieldItem {
             .filter_with_ident(ATTR_NAME)
             .group_into_nest_meta();
 
-        let sub_models = FieldMarcos::from_list(&meta_list)?.inner;
+        let sub_models = SubModelFieldDefs::from_list(&meta_list)?.inner;
 
-        let mut sub_maps = HashMap::with_capacity(sub_models.len());
+        let mut sub_maps = BTreeMap::new();
         // load all sub model info into HashMap
         // and check whether duplicate field or not
-        for (name,model) in sub_models {
-            if let Some(_) = sub_maps.insert(name.clone(), model) {
+        for (name, model) in sub_models {
+            if sub_maps.insert(name.clone(), model).is_some() {
                 darling_duplicate_field(&name)?;
             }
         }
@@ -50,7 +50,7 @@ impl FromField for FieldItem {
         Ok(Self {
             name,
             ty,
-            sub_models: sub_maps,
+            sub_model_field_defines: sub_maps,
         })
     }
 }

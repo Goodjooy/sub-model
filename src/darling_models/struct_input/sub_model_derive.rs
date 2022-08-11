@@ -4,12 +4,12 @@ use darling::{FromAttributes, FromDeriveInput, FromField, FromMeta};
 use syn::Ident;
 
 use crate::darling_models::{
-    field_item_infos::FieldItem,
-    struct_item_infos::sub_model_item::SubModels,
+    field_input::FieldItem,
+    struct_input::sub_model_item::SubModels,
     utils::{darling_custom, MetaList, ATTR_NAME},
 };
 
-use super::sub_model_item::SubModel;
+use super::sub_model_item::SubModelHeaderDef;
 
 /// core define information
 /// of all SubModels
@@ -17,7 +17,7 @@ pub struct SubModelDefs {
     /// the parent Model Name of all SubModel
     pub src_name: Ident,
     /// each subModel head Info
-    pub sub_models: HashMap<Ident, SubModel>,
+    pub sub_models: HashMap<Ident, SubModelHeaderDef>,
     /// each field in Parent Model
     pub fields: Vec<FieldItem>,
 }
@@ -33,7 +33,7 @@ impl FromDeriveInput for SubModelDefs {
             syn::Data::Union(_) => Err(darling::Error::unexpected_type("Union"))?,
         };
 
-        if input.generics.params.len() != 0 {
+        if !input.generics.params.is_empty() {
             darling_custom("SubModel Not Support Generic yet.")?;
         }
 

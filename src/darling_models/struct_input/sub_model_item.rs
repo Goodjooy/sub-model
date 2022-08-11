@@ -40,10 +40,10 @@ impl FromIdent for SubModelItem {
         }
     }
 }
-/// the sub model type 
+/// the sub model type
 /// `all` or `none`
 #[derive(Debug, PartialEq, Eq)]
-pub enum ModelType {
+pub enum ModelFieldCaptureType {
     /// default will capture all field
     /// of parent Model except the fields
     /// tagged by `ignore`
@@ -56,20 +56,20 @@ pub enum ModelType {
 
 /// full base define of sub Model
 #[derive(Debug)]
-pub struct SubModel {
+pub struct SubModelHeaderDef {
     /// the sub Model field capture behaver
-    pub ty: ModelType,
+    pub capture_type: ModelFieldCaptureType,
     /// the detail of the sub model defined
     pub data: SubModelItem,
 }
 
-impl SubModel {
+impl SubModelHeaderDef {
     fn get_name(&self) -> Ident {
         self.data.name.clone()
     }
 }
 
-impl FromMeta for SubModel {
+impl FromMeta for SubModelHeaderDef {
     fn from_nested_meta(item: &syn::NestedMeta) -> darling::Result<Self> {
         // the expect item position
         // #[sub_model(all("MockA"))]
@@ -97,15 +97,15 @@ impl FromMeta for SubModel {
             Ok(
                 // handle when #[sub_model(all("Mock"))]
                 if path.is_ident("all") {
-                    SubModel {
-                        ty: ModelType::All,
+                    SubModelHeaderDef {
+                        capture_type: ModelFieldCaptureType::All,
                         data: load_from_meta_list(&meta_list)?,
                     }
                 }
                 // handle when #[sub_model(none("Mock"))]
                 else if path.is_ident("none") {
-                    SubModel {
-                        ty: ModelType::None,
+                    SubModelHeaderDef {
+                        capture_type: ModelFieldCaptureType::None,
                         data: load_from_meta_list(&meta_list)?,
                     }
                 } else {
@@ -119,14 +119,14 @@ impl FromMeta for SubModel {
 /// a group of SubModel
 /// load all SubModel Header Def
 pub struct SubModels {
-    pub inner: HashMap<Ident, SubModel>,
+    pub inner: HashMap<Ident, SubModelHeaderDef>,
 }
 
 impl FromMeta for SubModels {
     fn from_list(items: &[syn::NestedMeta]) -> darling::Result<Self> {
         let mut inner = HashMap::with_capacity(items.len());
         for item in items {
-            let model = SubModel::from_nested_meta(item)?;
+            let model = SubModelHeaderDef::from_nested_meta(item)?;
             // if the target key exist , the HashMap::insert will return Some()
             // return the exist value
             // when the return is Some , that means we have 2 same name SubModel
@@ -146,9 +146,9 @@ mod test {
     use proc_macro2::Ident;
     use syn::NestedMeta;
 
-    use crate::darling_models::struct_item_infos::ModelType;
+    use crate::darling_models::struct_input::ModelFieldCaptureType;
 
-    use super::{SubModel, SubModels};
+    use super::{SubModelHeaderDef, SubModels};
 
     #[test]
     fn one_with_only_name() {
@@ -164,16 +164,17 @@ mod test {
 
         let none_ident = code!("NoneMock"=>Ident);
 
-        let all_resp = <SubModel as FromMeta>::from_nested_meta(&all).expect("cannot Load");
+        let all_resp =
+            <SubModelHeaderDef as FromMeta>::from_nested_meta(&all).expect("cannot Load");
 
-        assert_eq!(all_resp.ty, ModelType::All);
+        assert_eq!(all_resp.capture_type, ModelFieldCaptureType::All);
         assert_eq!(all_resp.get_name(), all_ident);
 
         println!("all out : {:?}", all_resp);
 
-        let none_resp = <SubModel as FromMeta>::from_nested_meta(&none).unwrap();
+        let none_resp = <SubModelHeaderDef as FromMeta>::from_nested_meta(&none).unwrap();
 
-        assert_eq!(none_resp.ty, ModelType::None);
+        assert_eq!(none_resp.capture_type, ModelFieldCaptureType::None);
         assert_eq!(none_resp.get_name(), none_ident);
 
         println!("none out : {:?}", none_resp);
@@ -198,11 +199,11 @@ mod test {
         );
         let ident = code!(Ident:"MockAll");
 
-        let all_resp = <SubModel as FromMeta>::from_nested_meta(&all).unwrap();
+        let all_resp = <SubModelHeaderDef as FromMeta>::from_nested_meta(&all).unwrap();
 
         println!("out {:?}", all_resp);
 
-        assert_eq!(all_resp.ty, ModelType::All);
+        assert_eq!(all_resp.capture_type, ModelFieldCaptureType::All);
         assert_eq!(all_resp.get_name(), ident);
         assert_eq!(all_resp.data.extra.inner.len(), 2);
         assert_eq!(all_resp.data.extra_field.inner.len(), 2);
@@ -234,32 +235,50 @@ mod test {
         let mock_b = code!(Ident:"MockB");
         let mock_c = code!(Ident:"MockC");
 
-        let code_out = <SubModels as FromMeta>::from_nested_meta(&item).unwrap().inner;
+        let code_out = <SubModels as FromMeta>::from_nested_meta(&item)
+            .unwrap()
+            .inner;
 
-        
         assert!(code_out.get(&mock_a).is_some());
-        assert_eq!(code_out.get(&mock_a).unwrap().get_name(),mock_a);
-        assert_eq!(code_out.get(&mock_a).unwrap().ty,ModelType::All);
-        assert_eq!(code_out.get(&mock_a).unwrap().data.extra_field.inner.len(),0);
-        assert_eq!(code_out.get(&mock_a).unwrap().data.extra.inner.len(),0);
+        assert_eq!(code_out.get(&mock_a).unwrap().get_name(), mock_a);
+        assert_eq!(
+            code_out.get(&mock_a).unwrap().capture_type,
+            ModelFieldCaptureType::All
+        );
+        assert_eq!(
+            code_out.get(&mock_a).unwrap().data.extra_field.inner.len(),
+            0
+        );
+        assert_eq!(code_out.get(&mock_a).unwrap().data.extra.inner.len(), 0);
 
-        println!("out {:?}\n\n",code_out.get(&mock_a).unwrap());
-        
-        
+        println!("out {:?}\n\n", code_out.get(&mock_a).unwrap());
+
         assert!(code_out.get(&mock_b).is_some());
-        assert_eq!(code_out.get(&mock_b).unwrap().get_name(),mock_b);
-        assert_eq!(code_out.get(&mock_b).unwrap().ty,ModelType::None);
-        assert_eq!(code_out.get(&mock_b).unwrap().data.extra_field.inner.len(),0);
-        assert_eq!(code_out.get(&mock_b).unwrap().data.extra.inner.len(),0);
-        
-        println!("out {:?}\n\n",code_out.get(&mock_b).unwrap());
-        
-        assert!(code_out.get(&mock_c).is_some());
-        assert_eq!(code_out.get(&mock_c).unwrap().get_name(),mock_c);
-        assert_eq!(code_out.get(&mock_c).unwrap().ty,ModelType::All);
-        assert_eq!(code_out.get(&mock_c).unwrap().data.extra_field.inner.len(),2);
-        assert_eq!(code_out.get(&mock_c).unwrap().data.extra.inner.len(),2);
+        assert_eq!(code_out.get(&mock_b).unwrap().get_name(), mock_b);
+        assert_eq!(
+            code_out.get(&mock_b).unwrap().capture_type,
+            ModelFieldCaptureType::None
+        );
+        assert_eq!(
+            code_out.get(&mock_b).unwrap().data.extra_field.inner.len(),
+            0
+        );
+        assert_eq!(code_out.get(&mock_b).unwrap().data.extra.inner.len(), 0);
 
-        println!("out {:?}\n\n",code_out.get(&mock_c).unwrap());
+        println!("out {:?}\n\n", code_out.get(&mock_b).unwrap());
+
+        assert!(code_out.get(&mock_c).is_some());
+        assert_eq!(code_out.get(&mock_c).unwrap().get_name(), mock_c);
+        assert_eq!(
+            code_out.get(&mock_c).unwrap().capture_type,
+            ModelFieldCaptureType::All
+        );
+        assert_eq!(
+            code_out.get(&mock_c).unwrap().data.extra_field.inner.len(),
+            2
+        );
+        assert_eq!(code_out.get(&mock_c).unwrap().data.extra.inner.len(), 2);
+
+        println!("out {:?}\n\n", code_out.get(&mock_c).unwrap());
     }
 }
