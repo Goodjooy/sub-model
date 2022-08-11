@@ -1,8 +1,9 @@
 use syn::Ident;
 
 use crate::darling_models::{
+    field_input::TypeMapping,
     utils::{ExtraAttrs, Vis},
-    FromIdent, field_input::TypeMapping,
+    FromIdent,
 };
 
 #[derive(Debug, Clone, darling::FromMeta)]
@@ -16,7 +17,7 @@ pub struct HaveField {
     pub vis: Vis,
     /// wether the field rename to
     /// another in sub model
-    #[darling(rename = "rename",default)]
+    #[darling(rename = "rename", default)]
     pub to_name: Option<Ident>,
     /// mapping type from parent to provide  
     /// if necessary
@@ -25,7 +26,7 @@ pub struct HaveField {
     /// extra information which tagging on
     /// the field in SubModel
     #[darling(default)]
-    pub extra:ExtraAttrs,
+    pub extra: ExtraAttrs,
 }
 
 impl FromIdent for HaveField {

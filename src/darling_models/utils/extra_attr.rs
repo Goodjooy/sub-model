@@ -1,10 +1,10 @@
 use darling::FromMeta;
-use syn::{NestedMeta, Meta};
+use syn::{Meta, NestedMeta};
 
 /// loading extra attrs from meta
 /// it accept all available meta list
 /// and not care what it is inside
-#[derive(Debug,Clone, Default)]
+#[derive(Debug, Clone, Default)]
 pub struct ExtraAttrs {
     pub inner: Vec<NestedMeta>,
 }

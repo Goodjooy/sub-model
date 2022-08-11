@@ -1,4 +1,4 @@
-#[derive(Debug,Clone, darling::FromMeta)]
+#[derive(Debug, Clone, darling::FromMeta)]
 /// mapping from src type to target type
 pub struct TypeMapping {
     /// the target type want to mapping

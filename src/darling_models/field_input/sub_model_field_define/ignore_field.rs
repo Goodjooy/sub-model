@@ -13,5 +13,7 @@ pub struct IgnoreField {
 }
 
 impl FromIdent for IgnoreField {
-    fn form_ident(ident: syn::Ident) -> Self { Self { owner: ident } }
+    fn form_ident(ident: syn::Ident) -> Self {
+        Self { owner: ident }
+    }
 }

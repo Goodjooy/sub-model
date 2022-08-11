@@ -7,7 +7,7 @@ use crate::darling_models::utils::{
     darling_duplicate_field, darling_unknown_format, load_from_meta_list,
 };
 
-use self::{ignore_field::IgnoreField, having_field::HaveField};
+use self::{having_field::HaveField, ignore_field::IgnoreField};
 pub mod having_field;
 pub mod ignore_field;
 
@@ -120,7 +120,7 @@ mod test {
     use darling::FromMeta;
     use syn::{Ident, MetaList, NestedMeta};
 
-    use super::{SubModelFieldDefs, SubModelFieldDef};
+    use super::{SubModelFieldDef, SubModelFieldDefs};
 
     #[test]
     fn test_one_simple() {

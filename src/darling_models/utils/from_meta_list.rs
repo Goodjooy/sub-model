@@ -4,11 +4,11 @@ use syn::NestedMeta;
 use crate::darling_models::FromIdent;
 
 /// trying to load `T` fro Metalist
-/// 
+///
 /// if failure and the first item of Metalist type
-/// is `NestedMeta::Lit(..)` 
-/// 
-/// trying using 
+/// is `NestedMeta::Lit(..)`
+///
+/// trying using
 /// `FromIdent` construct `T`
 pub fn load_from_meta_list<T: FromIdent>(
     meta_list: &impl AsRef<[NestedMeta]>,

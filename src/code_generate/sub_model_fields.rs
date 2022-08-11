@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use syn::{Ident, Type};
 
 use crate::darling_models::{
-    field_input::{FieldItem, SubModelFieldDef, HaveField, HaveStatus, TypeMapping},
+    field_input::{FieldItem, HaveField, HaveStatus, SubModelFieldDef, TypeMapping},
     struct_input::{ExtraField, ExtraFields, ModelFieldCaptureType},
     utils::darling_duplicate_field,
     FromIdent,
@@ -73,25 +73,33 @@ impl SubModelFields {
                         extra_info: FromIdent::form_ident(owner.clone()),
                     }),
                     (Some(SubModelFieldDef::Ignore(_)), ModelFieldCaptureType::All) => None?,
-                    (Some(SubModelFieldDef::Have(HaveStatus::Having, have)), ModelFieldCaptureType::All) => {
-                        ModelField::Src(SrcField {
-                            src_name: item.name.clone(),
-                            src_ty: item.ty.clone(),
-                            extra_info: have.clone(),
-                        })
-                    }
-                    (Some(SubModelFieldDef::Have(HaveStatus::Want, have)), ModelFieldCaptureType::None) => {
-                        ModelField::Src(SrcField {
-                            src_name: item.name.clone(),
-                            src_ty: item.ty.clone(),
-                            extra_info: have.clone(),
-                        })
-                    }
+                    (
+                        Some(SubModelFieldDef::Have(HaveStatus::Having, have)),
+                        ModelFieldCaptureType::All,
+                    ) => ModelField::Src(SrcField {
+                        src_name: item.name.clone(),
+                        src_ty: item.ty.clone(),
+                        extra_info: have.clone(),
+                    }),
+                    (
+                        Some(SubModelFieldDef::Have(HaveStatus::Want, have)),
+                        ModelFieldCaptureType::None,
+                    ) => ModelField::Src(SrcField {
+                        src_name: item.name.clone(),
+                        src_ty: item.ty.clone(),
+                        extra_info: have.clone(),
+                    }),
                     (None, ModelFieldCaptureType::None) => None?,
-                    (Some(SubModelFieldDef::Have(HaveStatus::Want, _)), ModelFieldCaptureType::All) => {
+                    (
+                        Some(SubModelFieldDef::Have(HaveStatus::Want, _)),
+                        ModelFieldCaptureType::All,
+                    ) => {
                         panic!("All Type SubModel Using Want")
                     }
-                    (Some(SubModelFieldDef::Have(HaveStatus::Having, _)), ModelFieldCaptureType::None) => {
+                    (
+                        Some(SubModelFieldDef::Have(HaveStatus::Having, _)),
+                        ModelFieldCaptureType::None,
+                    ) => {
                         panic!("None Type SubModel Using Having")
                     }
                     (Some(SubModelFieldDef::Ignore(_)), ModelFieldCaptureType::None) => {

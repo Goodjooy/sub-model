@@ -25,7 +25,10 @@ impl<'p> SubModelGen<'p> {
         sub_model: SubModelHeaderDef,
         fields: &[FieldItem],
     ) -> darling::Result<Self> {
-        let SubModelHeaderDef { capture_type: ty, data } = sub_model;
+        let SubModelHeaderDef {
+            capture_type: ty,
+            data,
+        } = sub_model;
         let vis = data.vis;
         let extra = data.extra;
 
