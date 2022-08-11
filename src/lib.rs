@@ -1,3 +1,4 @@
+mod bridge;
 mod code_generate;
 
 use code_generate::sub_model::load_from_sub_model_defs;
