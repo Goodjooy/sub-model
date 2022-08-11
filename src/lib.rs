@@ -2,7 +2,7 @@ mod code_generate;
 
 use code_generate::sub_model::load_from_sub_model_defs;
 use darling::FromDeriveInput;
-use darling_models::struct_item_infos::SubModelDefs;
+use darling_models::struct_input::SubModelDefs;
 use syn::{parse_macro_input, DeriveInput};
 
 mod darling_models;

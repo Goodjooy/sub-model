@@ -3,8 +3,8 @@ use std::collections::HashMap;
 use proc_macro2::Ident;
 
 use crate::darling_models::{
-    field_item_infos::FieldItem,
-    struct_item_infos::SubModel,
+    field_input::FieldItem,
+    struct_input::SubModel,
     utils::{ExtraAttrs, Vis},
 };
 

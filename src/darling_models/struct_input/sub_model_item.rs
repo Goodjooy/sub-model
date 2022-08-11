@@ -146,7 +146,7 @@ mod test {
     use proc_macro2::Ident;
     use syn::NestedMeta;
 
-    use crate::darling_models::struct_item_infos::ModelType;
+    use crate::darling_models::struct_input::ModelType;
 
     use super::{SubModel, SubModels};
 

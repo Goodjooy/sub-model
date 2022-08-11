@@ -3,8 +3,8 @@ use std::collections::HashMap;
 use syn::{Ident, Type};
 
 use crate::darling_models::{
-    field_item_infos::{FieldItem, FieldType, HaveField, HaveStatus, TypeMapping},
-    struct_item_infos::{ExtraField, ExtraFields, ModelType},
+    field_input::{FieldItem, FieldType, HaveField, HaveStatus, TypeMapping},
+    struct_input::{ExtraField, ExtraFields, ModelType},
     utils::darling_duplicate_field,
     FromIdent,
 };

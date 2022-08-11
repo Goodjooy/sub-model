@@ -1,4 +1,4 @@
-use std::{collections::HashMap, ops::Deref};
+use std::{collections::BTreeMap, ops::Deref};
 
 use darling::FromMeta;
 use syn::Ident;
@@ -63,12 +63,12 @@ impl FromMeta for ExtraField {
 /// duplicate of extra fields
 #[derive(Debug, Default)]
 pub struct ExtraFields {
-    pub inner: HashMap<Ident, ExtraField>,
+    pub inner: BTreeMap<Ident, ExtraField>,
 }
 
 impl FromMeta for ExtraFields {
     fn from_list(items: &[syn::NestedMeta]) -> darling::Result<Self> {
-        let mut inner = HashMap::with_capacity(items.len());
+        let mut inner = BTreeMap::new();
 
         for item in items {
             let item = ExtraField::from_nested_meta(item)?;

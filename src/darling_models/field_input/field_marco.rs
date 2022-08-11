@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 use darling::FromMeta;
 use syn::{Ident, MetaList};
@@ -96,12 +96,12 @@ impl FromMeta for FieldType {
 
 /// all sub model on specify field
 pub struct FieldMarcos {
-    pub inner: HashMap<Ident, FieldType>,
+    pub inner: BTreeMap<Ident, FieldType>,
 }
 
 impl FromMeta for FieldMarcos {
     fn from_list(items: &[syn::NestedMeta]) -> darling::Result<Self> {
-        let mut inner = HashMap::with_capacity(items.len());
+        let mut inner = BTreeMap::new();
         for item in items {
             let ft = FieldType::from_nested_meta(item).map_err(|e| e.with_span(item))?;
             if let Some(ft) = inner.insert(ft.get_owner(), ft) {
@@ -186,8 +186,8 @@ mod test {
 
         assert_eq!(fts.len(), 3);
 
-        for (k,v) in fts {
-            println!("owner : {:?}\n\n {:?}\n",k,v);
+        for (k, v) in fts {
+            println!("owner : {:?}\n\n {:?}\n", k, v);
         }
     }
 }

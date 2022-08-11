@@ -1,7 +1,7 @@
 use darling::ToTokens;
 use proc_macro2::Ident;
 
-use crate::darling_models::field_item_infos::TypeMapping;
+use crate::darling_models::field_input::TypeMapping;
 
 use super::sub_model_fields::ModelField;
 

@@ -4,8 +4,8 @@ use darling::{FromAttributes, FromDeriveInput, FromField, FromMeta};
 use syn::Ident;
 
 use crate::darling_models::{
-    field_item_infos::FieldItem,
-    struct_item_infos::sub_model_item::SubModels,
+    field_input::FieldItem,
+    struct_input::sub_model_item::SubModels,
     utils::{darling_custom, MetaList, ATTR_NAME},
 };
 
