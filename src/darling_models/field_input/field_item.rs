@@ -5,7 +5,7 @@ use syn::{Ident, Type};
 
 use crate::darling_models::utils::{darling_duplicate_field, MetaList, ATTR_NAME};
 
-use super::field_marco::{FieldMarcos, FieldType};
+use super::sub_model_field_define::{SubModelFieldDef, SubModelFieldDefs};
 
 /// the needing field info from Parent Model field
 pub struct FieldItem {
@@ -14,7 +14,7 @@ pub struct FieldItem {
     /// the type of Parent field
     pub ty: Type,
     /// all SubModel relate to this field
-    pub sub_models: BTreeMap<Ident, FieldType>,
+    pub sub_model_field_defines: BTreeMap<Ident, SubModelFieldDef>,
 }
 
 impl FromField for FieldItem {
@@ -36,7 +36,7 @@ impl FromField for FieldItem {
             .filter_with_ident(ATTR_NAME)
             .group_into_nest_meta();
 
-        let sub_models = FieldMarcos::from_list(&meta_list)?.inner;
+        let sub_models = SubModelFieldDefs::from_list(&meta_list)?.inner;
 
         let mut sub_maps = BTreeMap::new();
         // load all sub model info into HashMap
@@ -50,7 +50,7 @@ impl FromField for FieldItem {
         Ok(Self {
             name,
             ty,
-            sub_models: sub_maps,
+            sub_model_field_defines: sub_maps,
         })
     }
 }

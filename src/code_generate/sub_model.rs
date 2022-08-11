@@ -4,7 +4,7 @@ use proc_macro2::Ident;
 
 use crate::darling_models::{
     field_input::FieldItem,
-    struct_input::SubModel,
+    struct_input::SubModelHeaderDef,
     utils::{ExtraAttrs, Vis},
 };
 
@@ -22,10 +22,10 @@ impl<'p> SubModelGen<'p> {
     pub fn from_sub_model_defs(
         name: Ident,
         parent: &'p Ident,
-        sub_model: SubModel,
+        sub_model: SubModelHeaderDef,
         fields: &[FieldItem],
     ) -> darling::Result<Self> {
-        let SubModel { ty, data } = sub_model;
+        let SubModelHeaderDef { capture_type: ty, data } = sub_model;
         let vis = data.vis;
         let extra = data.extra;
 
@@ -44,7 +44,7 @@ impl<'p> SubModelGen<'p> {
 
 pub fn load_from_sub_model_defs<'怕>(
     src_name: &'怕 Ident,
-    sub_models: HashMap<Ident, SubModel>,
+    sub_models: HashMap<Ident, SubModelHeaderDef>,
     fields: &[FieldItem],
 ) -> darling::Result<HashMap<Ident, SubModelGen<'怕>>> {
     let mut res = HashMap::with_capacity(sub_models.len());

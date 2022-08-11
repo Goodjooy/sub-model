@@ -9,7 +9,7 @@ use crate::darling_models::{
     utils::{darling_custom, MetaList, ATTR_NAME},
 };
 
-use super::sub_model_item::SubModel;
+use super::sub_model_item::SubModelHeaderDef;
 
 /// core define information
 /// of all SubModels
@@ -17,7 +17,7 @@ pub struct SubModelDefs {
     /// the parent Model Name of all SubModel
     pub src_name: Ident,
     /// each subModel head Info
-    pub sub_models: HashMap<Ident, SubModel>,
+    pub sub_models: HashMap<Ident, SubModelHeaderDef>,
     /// each field in Parent Model
     pub fields: Vec<FieldItem>,
 }

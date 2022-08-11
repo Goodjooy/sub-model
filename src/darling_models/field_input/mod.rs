@@ -1,11 +1,10 @@
 mod field_item;
-mod field_marco;
-mod having_field;
-mod ignore_field;
+pub mod sub_model_field_define;
 mod type_mapping;
 
 pub use field_item::FieldItem;
-pub use field_marco::{FieldType, HaveStatus};
-pub use having_field::HaveField;
-pub use ignore_field::IgnoreField;
+pub use sub_model_field_define::having_field::HaveField;
+pub use sub_model_field_define::ignore_field::IgnoreField;
+pub use sub_model_field_define::SubModelFieldDef;
+pub use sub_model_field_define::HaveStatus;
 pub use type_mapping::TypeMapping;
