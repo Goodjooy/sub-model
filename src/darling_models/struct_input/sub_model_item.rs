@@ -126,8 +126,9 @@ impl FromMeta for SubModelHeaderDef {
                 else if path.is_ident("none") {
                     SubModelHeaderDef {
                         capture_type: ModelFieldCaptureType::None,
-                        data: load_from_meta_list(&meta_list)
-                            .and_then(|d: SubModelItem| d.check_field(ModelFieldCaptureType::None))?,
+                        data: load_from_meta_list(&meta_list).and_then(|d: SubModelItem| {
+                            d.check_field(ModelFieldCaptureType::None)
+                        })?,
                     }
                 } else {
                     Err(darling::Error::unknown_field_path(path))?

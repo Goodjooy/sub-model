@@ -32,8 +32,8 @@
 
 use darling::FromMeta;
 use proc_macro2::Ident;
-use syn::{Meta, MetaList};
 use syn::spanned::Spanned;
+use syn::{Meta, MetaList};
 
 use crate::darling_models::container_argument::partial_model::field_define::SkipFields;
 use crate::darling_models::utils::{darling_custom, darling_unknown_format, ExtraAttrs, Vis};
@@ -56,10 +56,7 @@ impl FromMeta for PartialModel {
                 let define = PartialModelDefine::from_meta(meta)?;
                 Ok(Self { name, define })
             }
-            meta => {
-                darling_custom("Expect internal define")
-                .map_err(|e| e.with_span(&meta.span()))
-            }
+            meta => darling_custom("Expect internal define").map_err(|e| e.with_span(&meta.span())),
         }
     }
 }
@@ -84,8 +81,12 @@ struct PartialModelDefine {
 impl PartialModelDefine {
     fn valid(mut self) -> darling::Result<Self> {
         match (self.all_fields, self.none_fields) {
-            (true, true) => { return darling_custom("`all_field` and `none_field` can only select one"); }
-            (false, false) => { self.none_fields = true; }
+            (true, true) => {
+                return darling_custom("`all_field` and `none_field` can only select one");
+            }
+            (false, false) => {
+                self.none_fields = true;
+            }
             _ => {}
         };
 
@@ -98,7 +99,9 @@ mod test {
     use darling::FromMeta;
     use syn::Meta;
 
-    use crate::darling_models::container_argument::partial_model::{PartialModel, PartialModelDefine};
+    use crate::darling_models::container_argument::partial_model::{
+        PartialModel, PartialModelDefine,
+    };
 
     #[test]
     fn test_model_parse() {

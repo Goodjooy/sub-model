@@ -40,14 +40,20 @@ impl SubModelDef {
 
         // load field in header
         for field in header_fields {
-            if let Some(item) = fields_input.get_mut(field.def.explicit().as_ref().and_then(|de|de.source.as_ref()).unwrap_or(&field.traget_filed)){
-                if let Some(field_def) = SubModelFieldDef::from_field_item(item,&ident,&capture_type)?
+            if let Some(item) = fields_input.get_mut(
+                field
+                    .def
+                    .explicit()
+                    .as_ref()
+                    .and_then(|de| de.source.as_ref())
+                    .unwrap_or(&field.traget_filed),
+            ) {
+                if let Some(field_def) =
+                    SubModelFieldDef::from_field_item(item, &ident, &capture_type)?
                 {
                     fields.push(field_def)
                 }
-
             }
-
         }
 
         // loading field mapping
@@ -81,11 +87,7 @@ impl SubModelDef {
             .map(|field| (field.name.clone(), field))
             .collect();
         for def in sub_model_defs.sub_models.into_values() {
-            let def = SubModelDef::from_sub_model_def(
-                def,
-                &mut map,
-                &sub_model_defs.src_name,
-            )?;
+            let def = SubModelDef::from_sub_model_def(def, &mut map, &sub_model_defs.src_name)?;
             vec.push(def);
         }
 

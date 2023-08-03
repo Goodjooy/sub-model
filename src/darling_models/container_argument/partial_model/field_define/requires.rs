@@ -1,7 +1,7 @@
 use darling::FromMeta;
 use proc_macro2::Ident;
-use syn::{Lit, Meta, NestedMeta};
 use syn::spanned::Spanned;
+use syn::{Lit, Meta, NestedMeta};
 use tap::{Tap, TapFallible};
 
 use crate::darling_models::utils::{darling_custom, darling_unknown_format, from_nest_meta_list};
@@ -27,12 +27,13 @@ impl FromMeta for RequireField {
                 let Some(ident) = path.get_ident()else {
                     return darling_unknown_format("ident", &path.span());
                 };
-                Ok(Self { field: ident.to_owned(), mode: RequireMode::Ref })
+                Ok(Self {
+                    field: ident.to_owned(),
+                    mode: RequireMode::Ref,
+                })
             }
-            Meta::List(span) => {
-                darling_custom("Expect K-V pair or Key only, but get List")
-                    .map_err(|e| e.with_span(&span.span()))
-            }
+            Meta::List(span) => darling_custom("Expect K-V pair or Key only, but get List")
+                .map_err(|e| e.with_span(&span.span())),
             Meta::NameValue(kv) => {
                 let Some(ident) = kv.path.get_ident().cloned() else {
                     return darling_unknown_format("ident", &kv.path.span());
@@ -46,9 +47,13 @@ impl FromMeta for RequireField {
                     "mut" => RequireMode::MutRef,
                     "owned" => RequireMode::Owner,
                     "ref" => RequireMode::Ref,
-                    _ => return darling_custom(
-                        &format!("Expect `mut`, `owned`,`ref` but get {}", s))
+                    _ => {
+                        return darling_custom(&format!(
+                            "Expect `mut`, `owned`,`ref` but get {}",
+                            s
+                        ))
                         .map_err(|e| e.with_span(&kv.lit.span()))
+                    }
                 };
 
                 Ok(Self { field: ident, mode })
@@ -58,7 +63,10 @@ impl FromMeta for RequireField {
 
     fn from_string(value: &str) -> darling::Result<Self> {
         let field = syn::parse_str::<Ident>(value)?;
-        Ok(Self { field, mode: Default::default() })
+        Ok(Self {
+            field,
+            mode: Default::default(),
+        })
     }
 }
 
@@ -77,7 +85,9 @@ mod test {
     use quote::format_ident;
     use syn::Meta;
 
-    use crate::darling_models::container_argument::partial_model::field_define::requires::{RequireList, RequireMode};
+    use crate::darling_models::container_argument::partial_model::field_define::requires::{
+        RequireList, RequireMode,
+    };
 
     #[test]
     fn test_field_requires() {

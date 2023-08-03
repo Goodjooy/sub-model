@@ -1,9 +1,9 @@
-use std::ops::Deref;
 use darling::FromMeta;
 use proc_macro2::Ident;
 use quote::IdentFragment;
-use syn::{Meta, MetaList, NestedMeta, Type};
+use std::ops::Deref;
 use syn::spanned::Spanned;
+use syn::{Meta, MetaList, NestedMeta, Type};
 use tap::{Tap, TapFallible};
 
 use constructor::Constructor;
@@ -11,8 +11,8 @@ use requires::RequireList;
 
 use crate::darling_models::utils::{darling_unknown_format, from_nest_meta_list};
 
-mod requires;
 mod constructor;
+mod requires;
 
 #[derive(Debug, FromMeta)]
 pub struct FieldDefine {
@@ -37,29 +37,35 @@ impl FromMeta for FieldItem {
                 let Some(field) = path.get_ident().cloned() else {
                     return darling_unknown_format("Ident", &path.span());
                 };
-                Ok(FieldItem { field, define: None })
+                Ok(FieldItem {
+                    field,
+                    define: None,
+                })
             }
             meta @ Meta::List(MetaList { path, .. }) => {
                 let Some(field) = path.get_ident().cloned() else {
                     return darling_unknown_format("Ident", &path.span());
                 };
                 let define = FieldDefine::from_meta(meta)?;
-                Ok(FieldItem { field, define: Some(define) })
+                Ok(FieldItem {
+                    field,
+                    define: Some(define),
+                })
             }
-            Meta::NameValue(pair) => {
-                darling_unknown_format("Name Value Meta", &pair.span())
-            }
+            Meta::NameValue(pair) => darling_unknown_format("Name Value Meta", &pair.span()),
         }
     }
 
     fn from_string(value: &str) -> darling::Result<Self> {
-        let field = syn::parse_str::<Ident>(value)
-            ?;
-        Ok(Self { field, define: None })
+        let field = syn::parse_str::<Ident>(value)?;
+        Ok(Self {
+            field,
+            define: None,
+        })
     }
 }
 
-#[derive(Debug,Default)]
+#[derive(Debug, Default)]
 pub struct Fields(pub(crate) Vec<FieldItem>);
 
 impl Deref for Fields {
@@ -76,9 +82,7 @@ impl FromMeta for Fields {
     }
 }
 
-
-
-#[derive(Debug,Default)]
+#[derive(Debug, Default)]
 pub struct SkipFields(pub(crate) Vec<Ident>);
 
 impl FromMeta for SkipFields {

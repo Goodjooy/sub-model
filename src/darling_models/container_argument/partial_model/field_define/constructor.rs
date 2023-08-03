@@ -1,6 +1,6 @@
 use darling::FromMeta;
-use syn::{ExprClosure, Path};
 use syn::spanned::Spanned;
+use syn::{ExprClosure, Path};
 
 #[derive(Debug)]
 pub enum Constructor {
@@ -10,7 +10,8 @@ pub enum Constructor {
 
 impl FromMeta for Constructor {
     fn from_string(value: &str) -> darling::Result<Self> {
-        syn::parse_str::<Path>(value).map(Constructor::Path)
+        syn::parse_str::<Path>(value)
+            .map(Constructor::Path)
             .or_else(|_| syn::parse_str::<ExprClosure>(value).map(Constructor::Closure))
             .map_err(darling::error::Error::from)
             .map_err(|e| e.with_span(&value.span()))
@@ -26,10 +27,11 @@ mod test {
 
     #[test]
     fn test_constructor_closure() {
-        let ast = code!(Meta : r#"constructor = "|owner:bool, foo:&mut i32, bar:String|parent.foo""#);
+        let ast =
+            code!(Meta : r#"constructor = "|owner:bool, foo:&mut i32, bar:String|parent.foo""#);
 
         let v = Constructor::from_meta(&ast).expect("Bad Parse");
-        assert!(matches!(v,Constructor::Closure(_)));
+        assert!(matches!(v, Constructor::Closure(_)));
     }
 
     #[test]
@@ -38,6 +40,6 @@ mod test {
 
         let v = Constructor::from_meta(&ast).expect("Bad Parse");
 
-        assert!(matches!(v,Constructor::Path(_)));
+        assert!(matches!(v, Constructor::Path(_)));
     }
 }

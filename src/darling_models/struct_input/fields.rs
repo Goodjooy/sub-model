@@ -1,8 +1,8 @@
 use std::marker::PhantomData;
 
 use darling::{util::Override, FromMeta};
-use syn::{Ident, MetaList};
 use syn::spanned::Spanned;
+use syn::{Ident, MetaList};
 
 use crate::darling_models::{
     field_input::TypeMapping,

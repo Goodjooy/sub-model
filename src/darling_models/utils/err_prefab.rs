@@ -16,6 +16,6 @@ pub fn darling_custom<T>(info: &str) -> darling::Result<T> {
     Err(darling::Error::custom(info))
 }
 
-pub fn darling_unexpected_type<T>(type_name:&str,span:&impl Spanned)->darling::Result<T>{
+pub fn darling_unexpected_type<T>(type_name: &str, span: &impl Spanned) -> darling::Result<T> {
     Err(darling::Error::unexpected_type(type_name).with_span(span))
 }

@@ -39,13 +39,19 @@ pub fn load_from_meta_list<T: FromIdent>(
     })
 }
 
-pub fn from_nest_meta_list<T: FromMeta, O, F: FnOnce(Vec<T>) -> O>(items: &[NestedMeta], mapper: F) -> darling::Result<O> {
+pub fn from_nest_meta_list<T: FromMeta, O, F: FnOnce(Vec<T>) -> O>(
+    items: &[NestedMeta],
+    mapper: F,
+) -> darling::Result<O> {
     items
         .iter()
         .map(T::from_nested_meta)
-        .fold(Ok(Vec::new().tap_mut(|vec| vec.reserve(items.len()))),
-              |vec, field| {
-                  let field = field?;
-                  vec.tap_ok_mut(|vec| vec.push(field))
-              }).map(mapper)
+        .fold(
+            Ok(Vec::new().tap_mut(|vec| vec.reserve(items.len()))),
+            |vec, field| {
+                let field = field?;
+                vec.tap_ok_mut(|vec| vec.push(field))
+            },
+        )
+        .map(mapper)
 }
