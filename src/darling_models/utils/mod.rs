@@ -1,3 +1,4 @@
+pub mod path_to_ident;
 mod err_prefab;
 mod extra_attr;
 mod from_meta_list;
@@ -7,7 +8,7 @@ mod vis;
 
 pub use err_prefab::{darling_custom, darling_duplicate_field, darling_unknown_format};
 pub use extra_attr::ExtraAttrs;
-pub use from_meta_list::load_from_meta_list;
+pub use from_meta_list::{load_from_meta_list,from_nest_meta_list};
 pub use nest_meta_list::MetaList;
 pub use only_nest_meta_list::only_neat_meta_list;
 pub use vis::Vis;
@@ -25,3 +26,4 @@ macro_rules! code {
         syn::parse_str::<$t>(code).expect("Bad Code")
     }};
 }
+

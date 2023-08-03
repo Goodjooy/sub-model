@@ -1,5 +1,6 @@
 use darling::FromMeta;
 use syn::NestedMeta;
+use tap::{Tap, TapFallible};
 
 use crate::darling_models::FromIdent;
 
@@ -36,4 +37,15 @@ pub fn load_from_meta_list<T: FromIdent>(
                     .map(<T as FromIdent>::form_ident)
             })
     })
+}
+
+pub fn from_nest_meta_list<T: FromMeta, O, F: FnOnce(Vec<T>) -> O>(items: &[NestedMeta], mapper: F) -> darling::Result<O> {
+    items
+        .iter()
+        .map(T::from_nested_meta)
+        .fold(Ok(Vec::new().tap_mut(|vec| vec.reserve(items.len()))),
+              |vec, field| {
+                  let field = field?;
+                  vec.tap_ok_mut(|vec| vec.push(field))
+              }).map(mapper)
 }
