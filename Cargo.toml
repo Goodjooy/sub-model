@@ -19,11 +19,7 @@ proc-macro = true
 
 [features]
 default = []
-auto_derive_all = [
-    "auto_derive_serde",
-    "auto_derive_base",
-    "auto_derive_builder"
-]
+auto_derive_all = ["auto_derive_serde", "auto_derive_base", "auto_derive_builder"]
 # serde derive
 auto_derive_serde = []
 # Debug Clone
@@ -36,3 +32,4 @@ syn = { version = "1.0", features = ["extra-traits"] }
 quote = "1.0"
 proc-macro2 = "1.0"
 darling = "0.13"
+tap = "1.0.1"
