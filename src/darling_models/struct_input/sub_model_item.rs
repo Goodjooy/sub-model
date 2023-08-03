@@ -8,7 +8,7 @@ use crate::darling_models::{
     FromIdent,
 };
 
-use super::extra_fields::ExtraFields;
+use super::{extra_fields::ExtraFields, fields::FieldSelect};
 
 #[derive(Debug, FromMeta)]
 /// each SubModel Define On
@@ -28,6 +28,25 @@ pub struct SubModelItem {
     /// in Parent Fields
     #[darling(default)]
     pub extra_field: ExtraFields,
+    #[darling(multiple, default)]
+    pub field: Vec<FieldSelect>,
+}
+
+impl SubModelItem {
+    fn check_field(mut self, mod_in: ModelFieldCaptureType) -> darling::Result<Self> {
+        match mod_in {
+            ModelFieldCaptureType::All => Ok(self),
+            ModelFieldCaptureType::None => {
+                let mut tmp = Vec::new();
+                tmp.reserve(self.field.len());
+                for field in self.field {
+                    tmp.push(field.check_none_mod()?);
+                }
+                self.field = tmp;
+                Ok(self)
+            }
+        }
+    }
 }
 
 impl FromIdent for SubModelItem {
@@ -37,6 +56,7 @@ impl FromIdent for SubModelItem {
             name: ident,
             extra: Default::default(),
             extra_field: Default::default(),
+            field: Default::default(),
         }
     }
 }
@@ -106,7 +126,8 @@ impl FromMeta for SubModelHeaderDef {
                 else if path.is_ident("none") {
                     SubModelHeaderDef {
                         capture_type: ModelFieldCaptureType::None,
-                        data: load_from_meta_list(&meta_list)?,
+                        data: load_from_meta_list(&meta_list)
+                            .and_then(|d: SubModelItem| d.check_field(ModelFieldCaptureType::None))?,
                     }
                 } else {
                     Err(darling::Error::unknown_field_path(path))?

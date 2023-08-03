@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use syn::Ident;
 
 use crate::darling_models::{
@@ -24,7 +26,7 @@ pub struct SubModelDef {
 impl SubModelDef {
     pub fn from_sub_model_def(
         header_def: SubModelHeaderDef,
-        fields_input: &mut Vec<FieldItem>,
+        fields_input: &mut HashMap<Ident, FieldItem>,
         root_model: &Ident,
     ) -> syn::Result<Self> {
         let SubModelHeaderDef { capture_type, data } = header_def;
@@ -32,10 +34,24 @@ impl SubModelDef {
         let vis = data.vis;
         let extra_attrs = data.extra;
         let ident = data.name;
+        let header_fields = data.field;
 
         let mut fields = Vec::new();
+
+        // load field in header
+        for field in header_fields {
+            if let Some(item) = fields_input.get_mut(field.def.explicit().as_ref().and_then(|de|de.source.as_ref()).unwrap_or(&field.traget_filed)){
+                if let Some(field_def) = SubModelFieldDef::from_field_item(item,&ident,&capture_type)?
+                {
+                    fields.push(field_def)
+                }
+
+            }
+
+        }
+
         // loading field mapping
-        for field in fields_input {
+        for (_, field) in fields_input {
             let field_def = SubModelFieldDef::from_field_item(field, &ident, &capture_type)?;
             if let Some(field_def) = field_def {
                 fields.push(field_def);
@@ -57,12 +73,17 @@ impl SubModelDef {
         })
     }
 
-    pub fn from_sub_model_defs(mut sub_model_defs: SubModelDefs) -> syn::Result<Vec<Self>> {
+    pub fn from_sub_model_defs(sub_model_defs: SubModelDefs) -> syn::Result<Vec<Self>> {
         let mut vec = Vec::new();
+        let mut map = sub_model_defs
+            .fields
+            .into_iter()
+            .map(|field| (field.name.clone(), field))
+            .collect();
         for def in sub_model_defs.sub_models.into_values() {
             let def = SubModelDef::from_sub_model_def(
                 def,
-                &mut sub_model_defs.fields,
+                &mut map,
                 &sub_model_defs.src_name,
             )?;
             vec.push(def);

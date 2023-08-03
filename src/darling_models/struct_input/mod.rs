@@ -1,3 +1,4 @@
+mod fields;
 mod extra_fields;
 mod sub_model_derive;
 mod sub_model_item;
